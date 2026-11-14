@@ -16,27 +16,49 @@
 
   /* ---------- Rideau de transition ---------- */
   function curtainOut() {
-    if (!curtain) return Promise.resolve();
-    if (!hasGsap || reduceMotion) { curtain.style.display = 'none'; return Promise.resolve(); }
+    // Première visite : aucun rideau, le contenu s'affiche tout de suite
+    if (!curtain || !root.classList.contains('is-nav')) return Promise.resolve();
     const panel = curtain.querySelector('.curtain-panel');
-    const logo = curtain.querySelector('.logo');
+    const done = () => { root.classList.remove('is-nav'); curtain.style.visibility = 'hidden'; };
+    if (!hasGsap || reduceMotion) { done(); return Promise.resolve(); }
     return new Promise(resolve => {
-      gsap.timeline({ onComplete: () => { curtain.style.visibility = 'hidden'; resolve(); } })
+      gsap.timeline({ onComplete: () => { done(); resolve(); } })
         .set(curtain, { visibility: 'visible' })
-        .fromTo(logo, { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1.6, duration: .35, ease: 'power2.out' })
-        .to(logo, { opacity: 0, y: -30, duration: .3, ease: 'power2.in' }, '+=.05')
-        .to(panel, { scaleY: 0, transformOrigin: 'top', duration: .8, ease: 'expo.inOut' }, '-=.15');
+        .fromTo(panel, { scaleY: 1 }, { scaleY: 0, transformOrigin: 'top', duration: .6, ease: 'expo.inOut' });
+      // On libère les animations d'entrée pendant que le rideau s'ouvre
+      setTimeout(resolve, 250);
     });
   }
   function curtainIn(href) {
     if (!curtain || !hasGsap || reduceMotion) { window.location.href = href; return; }
+    try { sessionStorage.setItem('mf-nav', '1'); } catch (e) {}
+    prefetch(href);
     const panel = curtain.querySelector('.curtain-panel');
     const logo = curtain.querySelector('.logo');
     gsap.timeline({ onComplete: () => { window.location.href = href; } })
       .set(curtain, { visibility: 'visible', pointerEvents: 'auto' })
-      .fromTo(panel, { scaleY: 0, transformOrigin: 'bottom' }, { scaleY: 1, duration: .65, ease: 'expo.inOut' })
-      .fromTo(logo, { opacity: 0, y: 30, scale: 1.6 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, '-=.2');
+      .fromTo(panel, { scaleY: 0, transformOrigin: 'bottom' }, { scaleY: 1, duration: .5, ease: 'expo.inOut' })
+      .fromTo(logo, { opacity: 0, y: 20, scale: 1.6 }, { opacity: 1, y: 0, duration: .25, ease: 'power2.out' }, '-=.15');
   }
+
+  /* ---------- Préchargement des pages au survol / toucher ---------- */
+  const prefetched = new Set();
+  function prefetch(href) {
+    try {
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin || prefetched.has(url.pathname) || url.pathname === location.pathname) return;
+      prefetched.add(url.pathname);
+      const l = document.createElement('link');
+      l.rel = 'prefetch'; l.href = url.pathname;
+      document.head.appendChild(l);
+    } catch (e) {}
+  }
+  const onIntent = e => {
+    const a = e.target.closest && e.target.closest('a[href$=".html"]');
+    if (a) prefetch(a.getAttribute('href'));
+  };
+  document.addEventListener('pointerover', onIntent, { passive: true });
+  document.addEventListener('touchstart', onIntent, { passive: true });
 
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
@@ -56,6 +78,8 @@
       const panel = curtain.querySelector('.curtain-panel');
       if (hasGsap) gsap.set(panel, { scaleY: 0 });
       curtain.style.visibility = 'hidden';
+      curtain.style.pointerEvents = '';
+      root.classList.remove('is-nav');
     }
   });
 
@@ -107,11 +131,12 @@
     const walk = node => {
       [...node.childNodes].forEach(child => {
         if (child.nodeType === 3) {
-          const parts = child.textContent.split(/(\s+)/);
+          // On ne coupe pas sur les espaces insécables (ex. « relève !»)
+          const parts = child.textContent.split(/([ \t\n\r]+)/);
           const frag = document.createDocumentFragment();
           parts.forEach(p => {
             if (!p) return;
-            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(' ')); return; }
+            if (/^[ \t\n\r]+$/.test(p)) { frag.appendChild(document.createTextNode(' ')); return; }
             const outer = document.createElement('span');
             outer.className = 'split-line';
             const inner = document.createElement('span');
@@ -311,18 +336,24 @@
 
   /* ---------- Démarrage ---------- */
   function start() {
-    curtainOut().then(() => document.dispatchEvent(new CustomEvent('mfoods:ready')));
+    curtainOut().then(() => {
+      if (window.__mfReady) return;
+      window.__mfReady = true;
+      document.dispatchEvent(new CustomEvent('mfoods:ready'));
+    });
     initReveals();
     initMouseParallax();
     if (window.ScrollTrigger) window.addEventListener('load', () => ScrollTrigger.refresh());
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  // Scripts en « defer » : on attend que tous soient exécutés (hero.js compris)
+  if (document.readyState !== 'complete') document.addEventListener('DOMContentLoaded', start);
   else start();
 
   // Sécurité : si quelque chose bloque, on retire le rideau
   setTimeout(() => {
-    if (curtain && getComputedStyle(curtain).visibility !== 'hidden' && !curtain.style.pointerEvents) {
-      curtain.style.display = 'none';
+    if (curtain && root.classList.contains('is-nav') && !curtain.style.pointerEvents) {
+      root.classList.remove('is-nav');
+      curtain.style.visibility = 'hidden';
     }
-  }, 4000);
+  }, 3000);
 })();

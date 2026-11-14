@@ -3,6 +3,11 @@
    Feuille de style globale
    ========================================================= */
 
+/* Polices hébergées localement (sous-ensemble latin) */
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/lilita-one-latin.woff2") format("woff2"); }
+@font-face { font-family: "Kaushan Script"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/kaushan-script-latin.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("../fonts/manrope-latin.woff2") format("woff2"); }
+
 :root {
   /* Marque */
   --green-900: #06200f;
@@ -292,8 +297,11 @@ ul { margin: 0; padding: 0; list-style: none; }
   background: linear-gradient(90deg, var(--green-400) 0 33.3%, var(--red-500) 33.3% 66.6%, var(--yellow-500) 66.6%);
 }
 .curtain .logo { position: relative; transform: scale(1.6); opacity: 0; }
-html:not(.js) .curtain { display: none; }
-html.js .curtain-panel { transform: scaleY(1); }
+/* Visible seulement lors d'une navigation interne (classe posée dans le <head>) */
+.curtain { visibility: hidden; }
+.curtain-panel { transform: scaleY(0); }
+html.is-nav .curtain { visibility: visible; }
+html.is-nav .curtain-panel { transform: scaleY(1); }
 
 /* =========================================================
    WhatsApp flottant
@@ -328,10 +336,6 @@ html.js .curtain-panel { transform: scaleY(1); }
   color: #fff; overflow: hidden; isolation: isolate;
   background: radial-gradient(circle at 62% 46%, var(--bg-inner) 0%, var(--bg-mid) 42%, var(--bg-outer) 100%);
 }
-.hero::after { /* grain */
-  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .18; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
-}
 .hero-glow {
   position: absolute; z-index: 0; width: 70vmin; height: 70vmin; border-radius: 50%;
   left: 62%; top: 46%; transform: translate(-50%, -50%);
@@ -346,14 +350,15 @@ html.js .curtain-panel { transform: scaleY(1); }
 }
 .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
 .layer--leaves { z-index: 1; }
-.layer--bg { z-index: 2; filter: blur(3px) brightness(.85); }
+.layer--bg { z-index: 2; }
+.layer--bg .float-item { filter: blur(3px) brightness(.85); }
 .layer--fg { z-index: 6; }
 .float-item { position: absolute; will-change: transform; user-select: none; -webkit-user-drag: none; }
-.leaf-item { position: absolute; opacity: .55; filter: blur(2px) brightness(.9); }
+.leaf-item { position: absolute; opacity: .55; filter: blur(2px) brightness(.9); will-change: transform; }
 
 .embers { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
 .ember {
-  position: absolute; bottom: -20px; border-radius: 50%;
+  position: absolute; bottom: -20px; border-radius: 50%; will-change: transform, opacity;
   background: radial-gradient(circle, #ffd27a 0%, #ff7b2a 45%, rgba(255, 60, 20, 0) 70%);
   animation: emberUp linear forwards;
 }
@@ -437,6 +442,9 @@ html.js .curtain-panel { transform: scaleY(1); }
 
 @media (max-width: 1020px) {
   .hero { --stage-h: min(46svh, 400px); }
+  /* Pas de flou d'arrière-plan sur mobile : coûteux au-dessus d'éléments animés */
+  .hero .p-card, .hero .chip { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(0, 0, 0, .18); }
+  .hero .p-card.is-active { background: rgba(255, 255, 255, .94); }
   .hero-inner { grid-template-columns: 1fr; grid-template-rows: auto auto auto; align-content: start; min-height: 0; padding-top: calc(var(--nav-h) + var(--stage-h) + 10px); gap: 18px; }
   .hero-copy { grid-row: 1; max-width: 100%; }
   .hero-center { left: 50%; top: calc(var(--nav-h) + var(--stage-h) / 2); height: calc(var(--stage-h) - 30px); }
@@ -608,10 +616,6 @@ html.js .curtain-panel { transform: scaleY(1); }
   background: radial-gradient(circle at 75% 40%, #1f6a3c 0%, var(--green-700) 45%, var(--green-900) 100%);
 }
 .page-hero--red { background: radial-gradient(circle at 75% 40%, #e8892b 0%, #a3231a 48%, #2a0806 100%); }
-.page-hero::after {
-  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .16; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
-}
 .page-hero .container { position: relative; z-index: 3; }
 .page-hero-copy { display: grid; gap: 22px; max-width: 760px; }
 .page-hero .display em { font-style: normal; color: var(--yellow-500); }

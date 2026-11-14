@@ -34,11 +34,14 @@
   };
   const ORDER = Object.keys(PRODUCTS);
 
-  // Préchargement
-  ORDER.forEach(k => {
+  // Préchargement des autres produits une fois la page chargée (ne concurrence pas l'affichage initial)
+  const preload = () => ORDER.forEach(k => {
     const p = PRODUCTS[k];
-    [p.img, ...Object.values(p.items)].forEach(src => { const i = new Image(); i.src = src; });
+    [p.img, ...Object.values(p.items)].forEach(src => { const i = new Image(); i.decoding = 'async'; i.src = src; });
   });
+  const idle = window.requestIdleCallback || (fn => setTimeout(fn, 1200));
+  if (document.readyState === 'complete') idle(preload);
+  else window.addEventListener('load', () => idle(preload), { once: true });
 
   const product = hero.querySelector('#product-model');
   const center = hero.querySelector('.hero-center');
@@ -73,11 +76,11 @@
     if (count) count.textContent = `0${ORDER.indexOf(key) + 1} / 0${ORDER.length}`;
   }
 
-  // État initial des ingrédients
+  // État des ingrédients en mémoire (pas d'attributs data-* : évite les recalculs de style)
+  const STATE = new WeakMap();
+  const st = el => STATE.get(el);
   items.forEach(it => {
-    it.dataset.rx = 0; it.dataset.ry = 0;
-    it.dataset.angle = parseFloat(it.dataset.rot || Math.random() * 360);
-    it.dataset.baseX = 0; it.dataset.baseY = 0;
+    STATE.set(it, { rx: 0, ry: 0, angle: parseFloat(it.dataset.rot || Math.random() * 360), baseX: 0, baseY: 0 });
   });
 
   function setActiveCard(key) {
@@ -146,14 +149,14 @@
     let done = 0;
     items.forEach(it => {
       const r = it.getBoundingClientRect();
-      const bx = parseFloat(it.dataset.baseX) || 0;
-      const by = parseFloat(it.dataset.baseY) || 0;
-      const rx = parseFloat(it.dataset.rx) || 0;
-      const ry = parseFloat(it.dataset.ry) || 0;
+      const bx = st(it).baseX;
+      const by = st(it).baseY;
+      const rx = st(it).rx;
+      const ry = st(it).ry;
       const curX = bx + rx, curY = by + ry;
       const tx = curX + (cx - (r.left + r.width / 2));
       const ty = curY + (cy - (r.top + r.height / 2));
-      const a0 = parseFloat(it.dataset.angle) || 0;
+      const a0 = st(it).angle;
       const nbx = (Math.random() - .5) * 160;
       const nby = (Math.random() - .5) * 160;
 
@@ -168,8 +171,8 @@
           x: nbx, y: nby, rotation: a0 + 120, scale: 1, opacity: 1, duration: .95, ease: 'back.out(1.5)',
           onStart: () => { center.style.zIndex = ''; },
           onComplete: () => {
-            it.dataset.angle = a0 + 120; it.dataset.baseX = nbx; it.dataset.baseY = nby;
-            it.dataset.rx = 0; it.dataset.ry = 0;
+            st(it).angle = a0 + 120; st(it).baseX = nbx; st(it).baseY = nby;
+            st(it).rx = 0; st(it).ry = 0;
             gsap.set(it, { clearProps: 'transform' });
             if (++done === items.length) switching = false;
           }
@@ -217,10 +220,23 @@
   let visible = true;
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
 
+  // Positions « au repos » mises en cache : aucune lecture de mise en page dans la boucle
+  let heroTop = 0, home = [];
+  function measure() {
+    heroTop = hero.getBoundingClientRect().top + window.scrollY;
+    home = items.map(it => {
+      const layer = it.offsetParent || hero;
+      return { x: layer.offsetLeft + it.offsetLeft + it.offsetWidth / 2, y: layer.offsetTop + it.offsetTop + it.offsetHeight / 2, fg: layer === layerFG };
+    });
+  }
+  measure();
+  let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(measure, 150); }, { passive: true });
+  window.addEventListener('load', measure, { once: true });
+
   const durs = [5, 7, 6, 8, 5.5, 6.5, 9, 11, 10];
   function tick() {
     requestAnimationFrame(tick);
-    if (!visible) return;
+    if (!visible || document.hidden) return;
     const t = performance.now() / 1000;
 
     // Sans souris (mobile) : léger balancement automatique
@@ -238,38 +254,42 @@
     layerLeaves.style.transform = `translate3d(${cur.x * -15}px, ${cur.y * -15}px, 0)`;
 
     if (!switching) {
+      const offY = heroTop - window.scrollY;
+      const nearHero = pointerActive && mouse.py > offY - 50 && mouse.py < offY + hero.offsetHeight + 50;
       items.forEach((it, i) => {
-        const r = it.getBoundingClientRect();
-        const dx = mouse.px - (r.left + r.width / 2);
-        const dy = mouse.py - (r.top + r.height / 2);
-        const dist = Math.hypot(dx, dy) || 1;
         let trx = 0, tr_y = 0, speed = 1;
+        let rx = st(it).rx;
+        let ry = st(it).ry;
+        const bx0 = st(it).baseX;
+        const by0 = st(it).baseY;
+        const h = home[i];
+        const lx = h.fg ? cur.x * 60 : cur.x * -30, ly = h.fg ? cur.y * 60 : cur.y * -30;
+        const dx = nearHero ? mouse.px - (h.x + lx + bx0 + rx) : 9999;
+        const dy = nearHero ? mouse.py - (offY + h.y + ly + by0 + ry) : 9999;
+        const dist = Math.hypot(dx, dy) || 1;
         if (dist < 380) {
           const f = (380 - dist) / 380;
           trx = (dx / dist) * f * -80;
           tr_y = (dy / dist) * f * -80;
           speed = 1 + f * 5;
         }
-        let rx = parseFloat(it.dataset.rx) || 0;
-        let ry = parseFloat(it.dataset.ry) || 0;
-        let ang = parseFloat(it.dataset.angle) || 0;
-        const bx = parseFloat(it.dataset.baseX) || 0;
-        const by = parseFloat(it.dataset.baseY) || 0;
+        let ang = st(it).angle;
+        const bx = bx0, by = by0;
         rx += (trx - rx) * .1; ry += (tr_y - ry) * .1;
         ang += .15 * speed * (i % 2 ? -1 : 1);
-        it.dataset.rx = rx; it.dataset.ry = ry; it.dataset.angle = ang;
+        st(it).rx = rx; st(it).ry = ry; st(it).angle = ang;
         const d = durs[i % durs.length];
         const ph = (t + i * .7) * (Math.PI * 2 / d);
         const fy = Math.sin(ph) * 15;
         const fa = Math.cos(ph) * 6;
-        it.style.transform = `translate(${rx + bx}px, ${ry + by + fy}px) rotate(${ang + fa}deg)`;
+        it.style.transform = `translate3d(${rx + bx}px, ${ry + by + fy}px, 0) rotate(${ang + fa}deg)`;
       });
     }
 
     leaves.forEach((lf, i) => {
       const d = 10 + i * 2;
       const ph = (t + i * 1.2) * (Math.PI * 2 / d);
-      lf.style.transform = `${lf.dataset.flip ? 'scaleX(-1) ' : ''}translate(${Math.cos(ph * .5) * 15}px, ${Math.sin(ph) * 20}px) rotate(${Math.sin(ph * .3) * 15 + (parseFloat(lf.dataset.rot) || 0)}deg)`;
+      lf.style.transform = `${lf.dataset.flip ? 'scaleX(-1) ' : ''}translate3d(${Math.cos(ph * .5) * 15}px, ${Math.sin(ph) * 20}px, 0) rotate(${Math.sin(ph * .3) * 15 + (parseFloat(lf.dataset.rot) || 0)}deg)`;
     });
   }
 
@@ -308,8 +328,9 @@
   tick();
   let started = false;
   const go = () => { if (!started) { started = true; intro(); } };
-  document.addEventListener('mfoods:ready', go, { once: true });
-  setTimeout(go, 2500);
+  if (window.__mfReady) go();
+  else document.addEventListener('mfoods:ready', go, { once: true });
+  setTimeout(go, 1500);
 
   // Braises
   window.MFoodsEmbers && window.MFoodsEmbers(hero.querySelector('.embers'), 360);

@@ -31,5 +31,11 @@ puis ouvrir http://localhost:5173
 - Réseaux sociaux : liens `href="#"` de la page Contact.
 - Les textes « conditions revendeurs », horaires, adresse exacte sont génériques : à valider avec la cliente.
 
+## Performance
+- Polices (`assets/fonts`) et GSAP (`assets/vendor`) hébergés localement, scripts en `defer`.
+- Images WebP en plusieurs tailles (`-640` / `-1100`, `-sm` pour les vignettes) avec `srcset`.
+- Rideau de transition uniquement lors d'une navigation interne ; pages préchargées au survol.
+- `_headers` : règles de cache navigateur (Netlify / Cloudflare Pages).
+
 ## Mise en ligne
 Glisser le dossier (sans `_sources/` ni `.claude/`) sur https://app.netlify.com/drop, ou publier via GitHub Pages.

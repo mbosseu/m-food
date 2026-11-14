@@ -15,10 +15,10 @@
   <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="assets/img/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Lilita+One&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/img/bouteille.webp">
+  <script>try{if(sessionStorage.getItem('mf-nav')){document.documentElement.classList.add('is-nav');sessionStorage.removeItem('mf-nav')}}catch(e){}</script>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/lilita-one-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/manrope-latin.woff2" crossorigin>
+  <link rel="preload" as="image" href="assets/img/bouteille.webp" fetchpriority="high">
   <link rel="stylesheet" href="assets/css/style.css">
   <noscript><style>[data-reveal]{opacity:1!important}.curtain{display:none!important}</style></noscript>
 </head>
@@ -124,11 +124,11 @@
             <span class="hero-count">01 / 02</span>
           </div>
           <button class="p-card is-active" data-product="huile" aria-pressed="true">
-            <span class="p-card-thumb"><img src="assets/img/bouteille.webp" alt=""></span>
+            <span class="p-card-thumb"><img src="assets/img/bouteille-sm.webp" alt=""></span>
             <span><span class="p-card-name">Huile de piment</span><br><span class="p-card-meta">Sauces · Grillades · Marinades</span></span>
           </button>
           <button class="p-card" data-product="poudre" aria-pressed="false">
-            <span class="p-card-thumb"><img src="assets/img/poudre.webp" alt=""></span>
+            <span class="p-card-thumb"><img src="assets/img/poudre-sm.webp" alt=""></span>
             <span><span class="p-card-name">Piment en poudre</span><br><span class="p-card-meta">Épices · Soya · Assaisonnement</span></span>
           </button>
         </div>
@@ -159,10 +159,10 @@
         </div>
         <div class="intro-visual" data-reveal="scale">
           <div class="intro-blob"></div>
-          <img class="iv-leaf" src="assets/img/feuille2.webp" alt="" loading="lazy" data-speed="1.4">
-          <img class="iv-bottle" src="assets/img/bouteille.webp" alt="Huile de piment M'foods" loading="lazy" data-speed=".4">
-          <img class="iv-jar" src="assets/img/poudre.webp" alt="Piment en poudre M'foods" loading="lazy" data-speed=".8">
-          <img class="iv-chili" src="assets/img/piment1.webp" alt="" loading="lazy" data-speed="1.6" data-rotate="20">
+          <img decoding="async" class="iv-leaf" src="assets/img/feuille2.webp" alt="" loading="lazy" data-speed="1.4">
+          <img decoding="async" class="iv-bottle" src="assets/img/bouteille.webp" alt="Huile de piment M'foods" loading="lazy" data-speed=".4">
+          <img decoding="async" class="iv-jar" src="assets/img/poudre.webp" alt="Piment en poudre M'foods" loading="lazy" data-speed=".8">
+          <img decoding="async" class="iv-chili" src="assets/img/piment1.webp" alt="" loading="lazy" data-speed="1.6" data-rotate="20">
         </div>
       </div>
     </section>
@@ -208,8 +208,8 @@
         </div>
         <div class="showcase">
           <a href="produits.html#huile" class="show-card show-card--oil" data-reveal="left">
-            <img class="sc-deco" src="assets/img/piment2.webp" alt="" loading="lazy">
-            <img class="sc-img" src="assets/img/bouteille.webp" alt="Huile de piment M'foods" loading="lazy">
+            <img decoding="async" class="sc-deco" src="assets/img/piment2.webp" alt="" loading="lazy">
+            <img decoding="async" class="sc-img" src="assets/img/bouteille.webp" alt="Huile de piment M'foods" loading="lazy">
             <div class="sc-top">
               <span class="script">La star de la table</span>
               <h3>Huile de piment</h3>
@@ -222,8 +222,8 @@
             </ul>
           </a>
           <a href="produits.html#poudre" class="show-card show-card--powder" data-reveal="right">
-            <img class="sc-deco" src="assets/img/piment-coupe.webp" alt="" loading="lazy">
-            <img class="sc-img" src="assets/img/poudre.webp" alt="Piment en poudre M'foods" loading="lazy">
+            <img decoding="async" class="sc-deco" src="assets/img/piment-coupe.webp" alt="" loading="lazy">
+            <img decoding="async" class="sc-img" src="assets/img/poudre.webp" alt="Piment en poudre M'foods" loading="lazy">
             <div class="sc-top">
               <span class="script">L'épice de caractère</span>
               <h3>Piment en poudre</h3>
@@ -251,19 +251,19 @@
         </div>
         <div class="recipes" data-stagger>
           <a href="recettes.html#poisson" class="recipe">
-            <div class="recipe-media"><img src="assets/img/recette-poisson.webp" alt="Poisson braisé à l'huile de piment" loading="lazy"><span class="recipe-tag">Huile de piment</span></div>
+            <div class="recipe-media"><img decoding="async" src="assets/img/recette-poisson-640.webp" srcset="assets/img/recette-poisson-640.webp 640w, assets/img/recette-poisson-1100.webp 1100w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 46vw, 300px" width="640" height="478" alt="Poisson braisé à l'huile de piment" loading="lazy"><span class="recipe-tag">Huile de piment</span></div>
             <div class="recipe-body"><h3>Poisson braisé</h3><p>La marinade qui fait toute la différence au feu de bois.</p><div class="recipe-meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>45 min</span><span>4 pers.</span></div></div>
           </a>
           <a href="recettes.html#soya" class="recipe">
-            <div class="recipe-media"><img src="assets/img/recette-soya.webp" alt="Brochettes de soya au piment en poudre" loading="lazy"><span class="recipe-tag recipe-tag--red">Piment en poudre</span></div>
+            <div class="recipe-media"><img decoding="async" src="assets/img/recette-soya-640.webp" srcset="assets/img/recette-soya-640.webp 640w, assets/img/recette-soya-1100.webp 1100w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 46vw, 300px" width="640" height="478" alt="Brochettes de soya au piment en poudre" loading="lazy"><span class="recipe-tag recipe-tag--red">Piment en poudre</span></div>
             <div class="recipe-body"><h3>Soya maison</h3><p>Des brochettes bien relevées, comme au coin de la rue.</p><div class="recipe-meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>30 min</span><span>4 pers.</span></div></div>
           </a>
           <a href="recettes.html#poulet-dg" class="recipe">
-            <div class="recipe-media"><img src="assets/img/recette-poulet-dg.webp" alt="Poulet DG relevé à l'huile de piment" loading="lazy"><span class="recipe-tag">Huile de piment</span></div>
+            <div class="recipe-media"><img decoding="async" src="assets/img/recette-poulet-dg-640.webp" srcset="assets/img/recette-poulet-dg-640.webp 640w, assets/img/recette-poulet-dg-1100.webp 1100w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 46vw, 300px" width="640" height="478" alt="Poulet DG relevé à l'huile de piment" loading="lazy"><span class="recipe-tag">Huile de piment</span></div>
             <div class="recipe-body"><h3>Poulet DG</h3><p>Le classique des grandes occasions, avec une touche de feu.</p><div class="recipe-meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>1 h 15</span><span>6 pers.</span></div></div>
           </a>
           <a href="recettes.html#sauce" class="recipe">
-            <div class="recipe-media"><img src="assets/img/recette-sauce.webp" alt="Sauce tomate pimentée" loading="lazy"><span class="recipe-tag recipe-tag--red">Les deux</span></div>
+            <div class="recipe-media"><img decoding="async" src="assets/img/recette-sauce-640.webp" srcset="assets/img/recette-sauce-640.webp 640w, assets/img/recette-sauce-1100.webp 1100w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 46vw, 300px" width="640" height="478" alt="Sauce tomate pimentée" loading="lazy"><span class="recipe-tag recipe-tag--red">Les deux</span></div>
             <div class="recipe-body"><h3>Sauce pimentée</h3><p>La sauce maison qui accompagne tout, du plantain au riz.</p><div class="recipe-meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>20 min</span><span>1 bocal</span></div></div>
           </a>
         </div>
@@ -285,9 +285,9 @@
             </div>
           </div>
           <div class="cta-band-visual" aria-hidden="true">
-            <img class="cb-1" src="assets/img/bouteille.webp" alt="" loading="lazy" data-speed=".6">
-            <img class="cb-2" src="assets/img/poudre.webp" alt="" loading="lazy" data-speed="1">
-            <img class="cb-3" src="assets/img/piment2.webp" alt="" loading="lazy" data-speed="1.6">
+            <img decoding="async" class="cb-1" src="assets/img/bouteille.webp" alt="" loading="lazy" data-speed=".6">
+            <img decoding="async" class="cb-2" src="assets/img/poudre.webp" alt="" loading="lazy" data-speed="1">
+            <img decoding="async" class="cb-3" src="assets/img/piment2.webp" alt="" loading="lazy" data-speed="1.6">
           </div>
         </div>
       </div>
@@ -297,7 +297,7 @@
   <!-- ================= FOOTER ================= -->
   <footer class="footer">
     <span class="footer-stripe"></span>
-    <img class="footer-chili" src="assets/img/piment1.webp" alt="" loading="lazy">
+    <img decoding="async" class="footer-chili" src="assets/img/piment1.webp" alt="" loading="lazy">
     <div class="container">
       <p class="footer-big" data-split>Ensemble, faisons grandir le <em>bon goût</em> !<span class="script">M'foods — Qualité, naturellement.</span></p>
       <div class="footer-grid">
@@ -318,9 +318,9 @@
     <span class="wa-label">Écrivez-nous</span>
   </a>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/hero.js"></script>
+  <script src="assets/vendor/gsap.min.js" defer></script>
+  <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/hero.js" defer></script>
 </body>
 </html>
