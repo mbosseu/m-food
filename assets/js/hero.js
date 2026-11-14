@@ -293,30 +293,10 @@
     });
   }
 
-  /* ---------- Entrée en scène ---------- */
-  const words = hero.querySelectorAll('.hero-copy [data-intro]');
-  gsap.set(words, { y: 40, opacity: 0 });
-  gsap.set(product, { opacity: 0 });
-  gsap.set(items, { scale: 0, opacity: 0 });
-  gsap.set(hero.querySelectorAll('.hero-side > *, .hero-bottom, .hero-stamp'), { y: 30, opacity: 0 });
-
+  /* ---------- Entrée en scène ----------
+     Jouée en CSS dès le premier affichage (voir .hero [data-intro] dans style.css) :
+     le contenu n'attend pas le chargement de JavaScript. */
   function intro() {
-    const s = { val: -540, blur: 18, o: 0, y: -120 };
-    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-    tl.to(s, {
-      val: 0, blur: 0, o: 1, y: 0, duration: 1.8, ease: 'expo.out',
-      onUpdate: () => {
-        spin = s.val;
-        product.style.opacity = s.o;
-        product.style.filter = `blur(${s.blur}px) drop-shadow(0 40px 60px rgba(0,0,0,.45))`;
-        center.style.marginTop = s.y + 'px';
-      },
-      onComplete: () => { spin = 0; center.style.marginTop = ''; }
-    })
-      .to(words, { y: 0, opacity: 1, duration: 1.1, stagger: .08 }, .15)
-      .to(items, { scale: 1, opacity: 1, duration: 1.2, stagger: { each: .05, from: 'random' }, ease: 'back.out(1.6)' }, .4)
-      .to(hero.querySelectorAll('.hero-side > *, .hero-bottom, .hero-stamp'), { y: 0, opacity: 1, duration: 1, stagger: .08 }, .7);
-
     // Lancement d'un auto-défilement si pas d'interaction
     autoTimer = setInterval(() => {
       if (interacted || document.hidden || !visible) return;

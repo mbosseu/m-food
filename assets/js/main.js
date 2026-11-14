@@ -161,10 +161,12 @@
       return;
     }
 
+    // Les hauts de page (.hero / .page-hero) sont animés en CSS dès le premier affichage
+    const ABOVE = '.hero, .page-hero';
     document.querySelectorAll('[data-split]').forEach(el => {
+      if (el.closest(ABOVE)) return;
       const words = splitWords(el);
       if (el.hasAttribute('data-reveal')) el.style.opacity = 1;
-      if (el.closest('.hero')) return; // géré par hero.js
       gsap.from(words, {
         yPercent: 115, rotate: 4, duration: 1.1, ease: 'expo.out', stagger: .045,
         scrollTrigger: { trigger: el, start: 'top 88%', once: true }
@@ -180,7 +182,7 @@
       rise: { y: 120, rotate: -4, opacity: 0 }
     };
     document.querySelectorAll('[data-reveal]:not([data-split])').forEach(el => {
-      if (el.closest('.hero')) return;
+      if (el.closest(ABOVE)) return;
       const from = presets[el.dataset.reveal] || presets.up;
       gsap.fromTo(el, from, {
         x: 0, y: 0, scale: 1, rotate: 0, opacity: 1,
