@@ -54,7 +54,7 @@
     } catch (e) {}
   }
   const onIntent = e => {
-    const a = e.target.closest && e.target.closest('a[href$=".html"]');
+    const a = e.target.closest && e.target.closest('a[href^="/"]:not([href^="//"])');
     if (a) prefetch(a.getAttribute('href'));
   };
   document.addEventListener('pointerover', onIntent, { passive: true });

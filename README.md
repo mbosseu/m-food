@@ -1,23 +1,23 @@
 # M'foods — site vitrine (démo)
 
 Site multi-pages pour **M'foods** (Yaoundé) : huile de piment et piment en poudre.
-HTML / CSS / JavaScript sans framework, animations **GSAP 3.12 + ScrollTrigger** (CDN cdnjs).
+HTML / CSS / JavaScript sans framework, animations **GSAP 3.12 + ScrollTrigger** (hébergés dans `assets/vendor`). Déployé sur Vercel avec URL propres (`vercel.json`).
 
 ## Pages
 | Fichier | Contenu |
 |---|---|
-| `index.html` | Accueil : héros interactif (changement de produit, ingrédients flottants, braises), engagements, gamme, recettes, appel revendeurs |
-| `produits.html` | Fiches Huile de piment / Piment en poudre + comparatif |
-| `recettes.html` | 4 recettes camerounaises |
-| `histoire.html` | Valeurs, savoir-faire (frise), chiffres |
-| `revendeur.html` | Avantages, étapes, formulaire → WhatsApp, FAQ |
-| `contact.html` | WhatsApp, téléphone, carte, formulaire → WhatsApp |
+| `index.html` (`/`) | Accueil : héros interactif (changement de produit, ingrédients flottants, braises), engagements, gamme, recettes, appel revendeurs |
+| `produits.html` (`/produits`) | Fiches Huile de piment / Piment en poudre + comparatif |
+| `recettes.html` (`/recettes`) | 4 recettes camerounaises |
+| `histoire.html` (`/histoire`) | Valeurs, savoir-faire (frise), chiffres |
+| `revendeur.html` (`/revendeur`) | Avantages, étapes, formulaire → WhatsApp, FAQ |
+| `contact.html` (`/contact`) | WhatsApp, téléphone, carte, formulaire → WhatsApp |
 
 ## Lancer en local
 ```bash
-python -m http.server 5173
+python serve.py
 ```
-puis ouvrir http://localhost:5173
+puis ouvrir http://localhost:5173 (URL propres : `/produits`, `/recettes`… comme sur Vercel).
 
 ## Structure
 - `assets/css/style.css` — design system (couleurs, typo, composants, responsive)
